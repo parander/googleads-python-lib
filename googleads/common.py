@@ -25,6 +25,7 @@ import threading
 import urllib2
 import warnings
 
+
 import httplib2
 import socks
 import suds
@@ -59,7 +60,7 @@ _DEPRECATED_VERSION_TEMPLATE = (
     'compatibility with this library, upgrade to Python 2.7.9 or higher.')
 
 
-VERSION = '4.6.1'
+VERSION = '5.1.0'
 _COMMON_LIB_SIG = 'googleads/%s' % VERSION
 _HTTP_PROXY_YAML_KEY = 'http_proxy'
 _HTTPS_PROXY_YAML_KEY = 'https_proxy'
@@ -77,6 +78,10 @@ _OAUTH2_SERVICE_ACCT_KEYS = ('service_account_email',
 # construct a Proxy, HTTPSProxy, and ProxyConfig instances.
 # instance.
 _PROXY_KEYS = ('host', 'port')
+
+# A key used to configure the client to accept and automatically decompress
+# gzip encoded SOAP responses.
+ENABLE_COMPRESSION_KEY = 'enable_compression'
 
 # Global variables used to enable and store utility usage stats.
 _utility_registry = googleads.util.UtilityRegistry()
@@ -106,6 +111,91 @@ def GenerateLibSig(short_name):
     return ' (%s, %s, %s)' % (short_name, _COMMON_LIB_SIG, _PYTHON_VERSION)
 
 
+def LoadFromString(yaml_doc, product_yaml_key, required_client_values,
+                   optional_product_values):
+  """Loads the data necessary for instantiating a client from file storage.
+
+  In addition to the required_client_values argument, the yaml file must supply
+  the keys used to create OAuth2 credentials. It may also optionally set proxy
+  configurations.
+
+  Args:
+    yaml_doc: the yaml document whose keys should be used.
+    product_yaml_key: The key to read in the yaml as a string.
+    required_client_values: A tuple of strings representing values which must
+      be in the yaml file for a supported API. If one of these keys is not in
+      the yaml file, an error will  be raised.
+    optional_product_values: A tuple of strings representing optional values
+      which may be in the yaml file.
+
+  Returns:
+    A dictionary map of the keys in the yaml file to their values. This will not
+    contain the keys used for OAuth2 client creation and instead will have a
+    GoogleOAuth2Client object stored in the 'oauth2_client' field.
+
+  Raises:
+    A GoogleAdsValueError if the given yaml file does not contain the
+    information necessary to instantiate a client object - either a
+    required_client_values key was missing or an OAuth2 key was missing.
+  """
+  # Warn users on deprecated Python versions on initialization.
+  if _PY_VERSION_MAJOR == 2:
+    if _PY_VERSION_MINOR == 7 and _PY_VERSION_MICRO < 9:
+      _logger.warning(_DEPRECATED_VERSION_TEMPLATE, _PY_VERSION_MAJOR,
+                      _PY_VERSION_MINOR, _PY_VERSION_MICRO)
+    elif _PY_VERSION_MINOR < 7:
+      _logger.warning(_DEPRECATED_VERSION_TEMPLATE, _PY_VERSION_MAJOR,
+                      _PY_VERSION_MINOR, _PY_VERSION_MICRO)
+
+  data = yaml.safe_load(yaml_doc) or {}
+
+  try:
+    product_data = data[product_yaml_key]
+  except KeyError:
+    raise googleads.errors.GoogleAdsValueError(
+        'The "%s" configuration is missing'
+        % (product_yaml_key,))
+
+  if not isinstance(product_data, dict):
+    raise googleads.errors.GoogleAdsValueError(
+        'The "%s" configuration is empty or invalid'
+        % (product_yaml_key,))
+
+  IncludeUtilitiesInUserAgent(data.get(_UTILITY_REGISTER_YAML_KEY, True))
+
+  original_keys = list(product_data.keys())
+  client_kwargs = {}
+  try:
+    for key in required_client_values:
+      client_kwargs[key] = product_data[key]
+      del product_data[key]
+  except KeyError:
+    raise googleads.errors.GoogleAdsValueError(
+        'Some of the required values are missing. Required '
+        'values are: %s, actual values are %s'
+        % (required_client_values, original_keys))
+
+  proxy_config_data = data.get(_PROXY_CONFIG_KEY, {})
+  proxy_config = _ExtractProxyConfig(product_yaml_key, proxy_config_data)
+  client_kwargs['proxy_config'] = proxy_config
+  client_kwargs['oauth2_client'] = _ExtractOAuth2Client(
+      product_yaml_key, product_data, proxy_config)
+
+  client_kwargs[ENABLE_COMPRESSION_KEY] = data.get(
+      ENABLE_COMPRESSION_KEY, False)
+
+  for value in optional_product_values:
+    if value in product_data:
+      client_kwargs[value] = product_data[value]
+      del product_data[value]
+
+  if product_data:
+    warnings.warn('Could not recognize the following keys: %s. '
+                  'They were ignored.' % (product_data,), stacklevel=3)
+
+  return client_kwargs
+
+
 def LoadFromStorage(path, product_yaml_key, required_client_values,
                     optional_product_values):
   """Loads the data necessary for instantiating a client from file storage.
@@ -133,58 +223,25 @@ def LoadFromStorage(path, product_yaml_key, required_client_values,
     information necessary to instantiate a client object - either a
     required_client_values key was missing or an OAuth2 key was missing.
   """
-  # Warn users on deprecated Python versions on initialization.
-  if _PY_VERSION_MAJOR == 2:
-    if _PY_VERSION_MINOR == 7 and _PY_VERSION_MICRO < 9:
-      _logger.warning(_DEPRECATED_VERSION_TEMPLATE, _PY_VERSION_MAJOR,
-                      _PY_VERSION_MINOR, _PY_VERSION_MICRO)
-    elif _PY_VERSION_MINOR < 7:
-      _logger.warning(_DEPRECATED_VERSION_TEMPLATE, _PY_VERSION_MAJOR,
-                      _PY_VERSION_MINOR, _PY_VERSION_MICRO)
 
   if not os.path.isabs(path):
     path = os.path.expanduser(path)
+
   try:
     with open(path, 'rb') as handle:
-      data = yaml.safe_load(handle.read())
-      product_data = data[product_yaml_key]
-      proxy_config_data = data.get(_PROXY_CONFIG_KEY) or {}
+      yaml_doc = handle.read()
   except IOError:
     raise googleads.errors.GoogleAdsValueError(
         'Given yaml file, %s, could not be opened.' % path)
-  except KeyError:
-    raise googleads.errors.GoogleAdsValueError(
-        'Given yaml file, %s, does not contain a "%s" configuration.'
-        % (path, product_yaml_key))
 
-  IncludeUtilitiesInUserAgent(data.get(_UTILITY_REGISTER_YAML_KEY, True))
-
-  original_keys = list(product_data.keys())
-  client_kwargs = {}
   try:
-    for key in required_client_values:
-      client_kwargs[key] = product_data[key]
-      del product_data[key]
-  except KeyError:
-    raise googleads.errors.GoogleAdsValueError(
-        'Your yaml file, %s, is missing some of the required values. Required '
-        'values are: %s, actual values are %s'
-        % (path, required_client_values, original_keys))
-
-  proxy_config = _ExtractProxyConfig(product_yaml_key, proxy_config_data)
-  client_kwargs['proxy_config'] = proxy_config
-  client_kwargs['oauth2_client'] = _ExtractOAuth2Client(
-      product_yaml_key, product_data, proxy_config)
-
-  for value in optional_product_values:
-    if value in product_data:
-      client_kwargs[value] = product_data[value]
-      del product_data[value]
-
-  if product_data:
-    warnings.warn('Your yaml file, %s, contains the following unrecognized '
-                  'keys: %s. They were ignored.' % (path, product_data),
-                  stacklevel=3)
+    client_kwargs = LoadFromString(yaml_doc, product_yaml_key,
+                                   required_client_values,
+                                   optional_product_values)
+  except googleads.errors.GoogleAdsValueError as e:
+    e.message = ('Given yaml file, %s, '
+                 'could not find some keys. %s' % (path, e.message))
+    raise
 
   return client_kwargs
 
@@ -639,12 +696,27 @@ class SudsServiceProxy(object):
       """Perform a SOAP call."""
       self._header_handler.SetHeaders(self.suds_client)
       try:
-        return soap_service_method(*[_PackForSuds(arg, self.suds_client.factory)
-                                     for arg in args])
+        return soap_service_method(
+            *[_PackForSuds(arg, self.suds_client.factory) for arg in args])
       except suds.WebFault as e:
         _logger.error('Server raised fault in response.')
         _logger.info('Failure response:\n%s', e.document)
-        raise e
+
+        if not hasattr(e.fault, 'detail'):
+          raise
+
+        # Before re-throwing the WebFault exception, an error object needs to be
+        # wrapped in a list for safe iteration.
+        fault = e.fault.detail.ApiExceptionFault
+        if not hasattr(fault, 'errors') or fault.errors is None:
+          e.fault.detail.ApiExceptionFault.errors = []
+          raise
+
+        obj = fault.errors
+        if not isinstance(obj, list):
+          fault.errors = [obj]
+
+        raise
 
     return MakeSoapRequest
 

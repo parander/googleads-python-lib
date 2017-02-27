@@ -39,69 +39,6 @@ SUGGESTED_PAGE_LIMIT = 500
 _CHUNK_SIZE = 16 * 1024
 # A giant dictionary of DFP versions and the services they support.
 _SERVICE_MAP = {
-    'v201508':
-        ('ActivityGroupService', 'ActivityService', 'AdExclusionRuleService',
-         'AdRuleService', 'AudienceSegmentService', 'BaseRateService',
-         'CompanyService', 'ContactService', 'ContentBundleService',
-         'ContentMetadataKeyHierarchyService', 'ContentService',
-         'CreativeService', 'CreativeSetService', 'CreativeTemplateService',
-         'CreativeWrapperService', 'CustomFieldService',
-         'CustomTargetingService', 'ExchangeRateService', 'ForecastService',
-         'InventoryService', 'LabelService',
-         'LineItemCreativeAssociationService', 'LineItemService',
-         'LineItemTemplateService', 'LiveStreamEventService', 'NetworkService',
-         'OrderService', 'PackageService', 'PlacementService',
-         'PremiumRateService', 'ProductService', 'ProductPackageService',
-         'ProductPackageItemService', 'ProductTemplateService',
-         'ProposalLineItemService', 'ProposalService',
-         'PublisherQueryLanguageService', 'RateCardService',
-         'ReconciliationOrderReportService', 'ReconciliationReportRowService',
-         'ReconciliationLineItemReportService',
-         'ReconciliationReportService', 'ReportService', 'SharedAdUnitService',
-         'SuggestedAdUnitService', 'TeamService', 'UserService',
-         'UserTeamAssociationService', 'WorkflowRequestService'),
-    'v201511':
-        ('ActivityGroupService', 'ActivityService', 'AdExclusionRuleService',
-         'AdRuleService', 'AudienceSegmentService', 'BaseRateService',
-         'CompanyService', 'ContactService', 'ContentBundleService',
-         'ContentMetadataKeyHierarchyService', 'ContentService',
-         'CreativeService', 'CreativeSetService', 'CreativeTemplateService',
-         'CreativeWrapperService', 'CustomFieldService',
-         'CustomTargetingService', 'ExchangeRateService', 'ForecastService',
-         'InventoryService', 'LabelService',
-         'LineItemCreativeAssociationService', 'LineItemService',
-         'LineItemTemplateService', 'LiveStreamEventService', 'NetworkService',
-         'OrderService', 'PackageService', 'PlacementService',
-         'PremiumRateService', 'ProductService', 'ProductPackageService',
-         'ProductPackageItemService', 'ProductTemplateService',
-         'ProposalLineItemService', 'ProposalService',
-         'PublisherQueryLanguageService', 'RateCardService',
-         'ReconciliationOrderReportService', 'ReconciliationReportRowService',
-         'ReconciliationLineItemReportService',
-         'ReconciliationReportService', 'ReportService', 'SharedAdUnitService',
-         'SuggestedAdUnitService', 'TeamService', 'UserService',
-         'UserTeamAssociationService', 'WorkflowRequestService'),
-    'v201602':
-        ('ActivityGroupService', 'ActivityService', 'AdExclusionRuleService',
-         'AdRuleService', 'AudienceSegmentService', 'BaseRateService',
-         'CompanyService', 'ContactService', 'ContentBundleService',
-         'ContentMetadataKeyHierarchyService', 'ContentService',
-         'CreativeService', 'CreativeSetService', 'CreativeTemplateService',
-         'CreativeWrapperService', 'CustomFieldService',
-         'CustomTargetingService', 'ExchangeRateService', 'ForecastService',
-         'InventoryService', 'LabelService',
-         'LineItemCreativeAssociationService', 'LineItemService',
-         'LineItemTemplateService', 'LiveStreamEventService', 'NetworkService',
-         'OrderService', 'PackageService', 'PlacementService',
-         'PremiumRateService', 'ProductService', 'ProductPackageService',
-         'ProductPackageItemService', 'ProductTemplateService',
-         'ProposalLineItemService', 'ProposalService',
-         'PublisherQueryLanguageService', 'RateCardService',
-         'ReconciliationOrderReportService', 'ReconciliationReportRowService',
-         'ReconciliationLineItemReportService',
-         'ReconciliationReportService', 'ReportService',
-         'SuggestedAdUnitService', 'TeamService', 'UserService',
-         'UserTeamAssociationService', 'WorkflowRequestService'),
     'v201605':
         ('ActivityGroupService', 'ActivityService', 'AdExclusionRuleService',
          'AdRuleService', 'AudienceSegmentService', 'BaseRateService',
@@ -144,6 +81,49 @@ _SERVICE_MAP = {
          'ReconciliationReportService', 'ReportService',
          'SuggestedAdUnitService', 'TeamService', 'UserService',
          'UserTeamAssociationService', 'WorkflowRequestService'),
+    'v201611':
+        ('ActivityGroupService', 'ActivityService', 'AdExclusionRuleService',
+         'AdRuleService', 'AudienceSegmentService', 'BaseRateService',
+         'CompanyService', 'ContactService', 'ContentBundleService',
+         'ContentMetadataKeyHierarchyService', 'ContentService',
+         'CreativeService', 'CreativeSetService', 'CreativeTemplateService',
+         'CreativeWrapperService', 'CustomFieldService',
+         'CustomTargetingService', 'ExchangeRateService', 'ForecastService',
+         'InventoryService', 'LabelService',
+         'LineItemCreativeAssociationService', 'LineItemService',
+         'LineItemTemplateService', 'LiveStreamEventService',
+         'MobileApplicationService', 'NetworkService', 'OrderService',
+         'PackageService', 'PlacementService', 'PremiumRateService',
+         'ProductService', 'ProductPackageService', 'ProductPackageItemService',
+         'ProductTemplateService', 'ProposalLineItemService', 'ProposalService',
+         'PublisherQueryLanguageService', 'RateCardService',
+         'ReconciliationOrderReportService', 'ReconciliationReportRowService',
+         'ReconciliationLineItemReportService',
+         'ReconciliationReportService', 'ReportService',
+         'SuggestedAdUnitService', 'TeamService', 'UserService',
+         'UserTeamAssociationService', 'WorkflowRequestService'),
+    'v201702':
+        ('ActivityGroupService', 'ActivityService', 'AdExclusionRuleService',
+         'AdRuleService', 'AudienceSegmentService', 'BaseRateService',
+         'CompanyService', 'ContactService', 'ContentBundleService',
+         'ContentMetadataKeyHierarchyService', 'ContentService',
+         'CreativeService', 'CreativeSetService', 'CreativeTemplateService',
+         'CreativeWrapperService', 'CustomFieldService',
+         'CustomTargetingService', 'ExchangeRateService', 'ForecastService',
+         'InventoryService', 'LabelService',
+         'LineItemCreativeAssociationService', 'LineItemService',
+         'LineItemTemplateService', 'LiveStreamEventService',
+         'MobileApplicationService', 'NativeStyleService', 'NetworkService',
+         'OrderService', 'PackageService', 'PlacementService',
+         'PremiumRateService', 'ProductService', 'ProductPackageService',
+         'ProductPackageItemService', 'ProductTemplateService',
+         'ProposalLineItemService', 'ProposalService',
+         'PublisherQueryLanguageService', 'RateCardService',
+         'ReconciliationOrderReportService', 'ReconciliationReportRowService',
+         'ReconciliationLineItemReportService',
+         'ReconciliationReportService', 'ReportService',
+         'SuggestedAdUnitService', 'TeamService', 'UserService',
+         'UserTeamAssociationService', 'WorkflowRequestService'),
 }
 
 
@@ -169,10 +149,30 @@ class DfpClient(object):
   _REQUIRED_INIT_VALUES = ('application_name',)
   # A list of values which may optionally be provided when using DFP.
   _OPTIONAL_INIT_VALUES = (
-      'network_code', 'https_proxy')
+      'network_code', 'https_proxy',
+      googleads.common.ENABLE_COMPRESSION_KEY)
   # The format of SOAP service WSDLs. A server, version, and service name need
   # to be formatted in.
   _SOAP_SERVICE_FORMAT = '%s/apis/ads/publisher/%s/%s?wsdl'
+
+  @classmethod
+  def LoadFromString(cls, yaml_doc):
+    """Creates a DfpClient with information stored in a yaml string.
+
+    Args:
+      yaml_doc: The yaml string containing the cached DFP data.
+
+    Returns:
+      A DfpClient initialized with the values cached in the yaml string.
+
+    Raises:
+      A GoogleAdsValueError if the given yaml string does not contain the
+      information necessary to instantiate a client object - either a
+      required key was missing or an OAuth2 key was missing.
+    """
+    return cls(**googleads.common.LoadFromString(
+        yaml_doc, cls._YAML_KEY, cls._REQUIRED_INIT_VALUES,
+        cls._OPTIONAL_INIT_VALUES))
 
   @classmethod
   def LoadFromStorage(cls, path=None):
@@ -198,7 +198,8 @@ class DfpClient(object):
         cls._OPTIONAL_INIT_VALUES))
 
   def __init__(self, oauth2_client, application_name, network_code=None,
-               cache=None, proxy_config=None):
+               cache=None, proxy_config=None,
+               enable_compression=False):
     """Initializes a DfpClient.
 
     For more information on these arguments, see our SOAP headers guide:
@@ -213,9 +214,13 @@ class DfpClient(object):
       network_code: A string identifying the network code of the network you are
           accessing. All requests other than getAllNetworks and getCurrentUser
           calls require this header to be set.
-      cache: A subclass of suds.cache.Cache; defaults to None.
+      cache: A subclass of suds.cache.Cache. If not set, this will default to an
+          instance of suds.cache.FileCache.
       proxy_config: A googleads.common.ProxyConfig instance or None if a proxy
         isn't being used.
+      enable_compression: A boolean indicating if you want to enable compression
+        of the SOAP response. If True, the SOAP response will use gzip
+        compression, and will be decompressed for you automatically.
     """
     if not application_name or (DEFAULT_APPLICATION_NAME in application_name):
       raise googleads.errors.GoogleAdsValueError(
@@ -226,9 +231,13 @@ class DfpClient(object):
     self.application_name = application_name
     self.network_code = network_code
     self.cache = cache
-    self._header_handler = _DfpHeaderHandler(self)
+    self._header_handler = _DfpHeaderHandler(self, enable_compression)
     self.proxy_config = (proxy_config if proxy_config
                          else googleads.common.ProxyConfig())
+
+    if enable_compression:
+      self.application_name = '%s (gzip)' % self.application_name
+
 
   def GetService(self, service_name, version=sorted(_SERVICE_MAP.keys())[-1],
                  server=None):
@@ -254,11 +263,18 @@ class DfpClient(object):
       server = DEFAULT_ENDPOINT
 
     server = server[:-1] if server[-1] == '/' else server
+
+    kwargs = {'timeout': 3600,
+              'transport': self.proxy_config.GetSudsProxyTransport()}
+
+    if self.cache:
+      kwargs['cache'] = self.cache
+
     try:
       client = suds.client.Client(
           self._SOAP_SERVICE_FORMAT % (server, version, service_name),
-          cache=self.cache, timeout=3600,
-          transport=self.proxy_config.GetSudsProxyTransport())
+          **kwargs)
+
     except suds.transport.TransportError:
       if version in _SERVICE_MAP:
         if service_name in _SERVICE_MAP[version]:
@@ -306,15 +322,19 @@ class _DfpHeaderHandler(googleads.common.HeaderHandler):
   # The name of the WSDL-defined SOAP Header class used in all requests.
   _SOAP_HEADER_CLASS = 'SoapRequestHeader'
 
-  def __init__(self, dfp_client):
+  def __init__(self, dfp_client, enable_compression):
     """Initializes a DfpHeaderHandler.
 
     Args:
       dfp_client: The DfpClient whose data will be used to fill in the headers.
           We retain a reference to this object so that the header handler picks
           up changes to the client.
+      enable_compression: A boolean indicating if you want to enable compression
+        of the SOAP response. If True, the SOAP response will use gzip
+        compression, and will be decompressed for you automatically.
     """
     self._dfp_client = dfp_client
+    self.enable_compression = enable_compression
 
   def SetHeaders(self, suds_client):
     """Sets the SOAP and HTTP headers on the given suds client."""
@@ -323,9 +343,13 @@ class _DfpHeaderHandler(googleads.common.HeaderHandler):
     header.applicationName = ''.join([self._dfp_client.application_name,
                                       self._LIB_SIG])
 
+    http_headers = self._dfp_client.oauth2_client.CreateHttpHeader()
+    if self.enable_compression:
+      http_headers['accept-encoding'] = 'gzip'
+
     suds_client.set_options(
         soapheaders=header,
-        headers=self._dfp_client.oauth2_client.CreateHttpHeader())
+        headers=http_headers)
 
 
 class FilterStatement(object):
